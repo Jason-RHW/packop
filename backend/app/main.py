@@ -8,8 +8,14 @@ from app.schemas import OptimizeRequest
 
 app = FastAPI(title="Carton Design & Pallet Loading Optimizer")
 
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5175")
-cors_origins = {frontend_url, "http://localhost:5175", "http://127.0.0.1:5175"}
+# FRONTEND_URL accepts one origin or a comma-separated list. Keep localhost as
+# an allowed origin for local dev, even when production origins are configured.
+cors_origins = {"http://localhost:5175", "http://127.0.0.1:5175"}
+cors_origins.update(
+    origin.strip()
+    for origin in os.getenv("FRONTEND_URL", "").split(",")
+    if origin.strip()
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=sorted(cors_origins),
@@ -21,6 +27,11 @@ app.add_middleware(
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "Carton Design & Pallet Loading Optimizer"}
 
 
 @app.post("/api/optimize")

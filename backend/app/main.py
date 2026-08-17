@@ -34,6 +34,11 @@ def root():
     return {"status": "ok", "service": "Carton Design & Pallet Loading Optimizer"}
 
 
+@app.head("/")
+def root_head():
+    return None
+
+
 @app.post("/api/optimize")
 def optimize(req: OptimizeRequest):
     if req.mode == "fixed_N" and not req.N:

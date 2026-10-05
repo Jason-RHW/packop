@@ -7,6 +7,7 @@ export const translations = {
     emptyState: 'Configure your box, carton rule, and pallet on the left, then run the optimizer to generate a report.',
     footerNote: 'ALL 6 INNER-BOX ORIENTATIONS × ALL 6 CARTON-ON-PALLET ORIENTATIONS EVALUATED PER RUN',
     noFeasible: 'No feasible arrangement found for these inputs.',
+    fillRequired: 'Enter the inner box dimensions, unit weight, and carton fill values (sections 01 and 02) first.',
 
     secInnerBoxTitle: 'Inner Box',
     secInnerBoxCaption: 'The single unit being packed.',
@@ -82,6 +83,7 @@ export const translations = {
     emptyState: '在左侧设置内箱、纸箱规则与托盘参数，然后运行优化器以生成报告。',
     footerNote: '每次运行均测试全部6种内箱朝向 × 全部6种纸箱上托盘朝向',
     noFeasible: '当前输入无可行方案。',
+    fillRequired: '请先填写内箱尺寸、单件重量和装箱模式的数值（第01、02部分）。',
 
     secInnerBoxTitle: '内箱',
     secInnerBoxCaption: '被包装的单个产品。',

@@ -8,7 +8,10 @@ export async function optimize(payload) {
   })
   const data = await res.json()
   if (!res.ok) {
-    throw new Error(data.detail || 'Optimization failed')
+    const detail = Array.isArray(data.detail)
+      ? data.detail.map((d) => `${(d.loc || []).slice(1).join('.')}: ${d.msg}`).join('; ')
+      : data.detail
+    throw new Error(detail || 'Optimization failed')
   }
   return data
 }

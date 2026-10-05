@@ -264,6 +264,11 @@ input[type="number"], input[type="text"] {
   transition: border-color 0.15s;
 }
 
+input::placeholder {
+  color: var(--ink-faint);
+  opacity: 1;
+}
+
 input[type="number"]:focus, input[type="text"]:focus {
   outline: none;
   border-bottom: 2px solid var(--ink);

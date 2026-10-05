@@ -1,7 +1,7 @@
 import { lengthSuffix, mmToDisplay, displayToMm } from '../units.js'
 import { t } from '../i18n.js'
 
-function NumField({ label, value, onChange, step = 1, suffix }) {
+function NumField({ label, value, onChange, step = 1, suffix, placeholder }) {
   return (
     <div>
       <label className="field-label">{label}{suffix ? ` (${suffix})` : ''}</label>
@@ -9,13 +9,14 @@ function NumField({ label, value, onChange, step = 1, suffix }) {
         type="number"
         value={value}
         step={step}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
       />
     </div>
   )
 }
 
-function LengthField({ label, mmValue, onChangeMm, units }) {
+function LengthField({ label, mmValue, onChangeMm, units, placeholderMm }) {
   const suffix = lengthSuffix(units)
   const step = units === 'imperial' ? 0.01 : 1
   return (
@@ -25,6 +26,7 @@ function LengthField({ label, mmValue, onChangeMm, units }) {
         type="number"
         value={mmToDisplay(mmValue, units)}
         step={step}
+        placeholder={placeholderMm != null ? String(mmToDisplay(placeholderMm, units)) : undefined}
         onChange={(e) => {
           const raw = e.target.value === '' ? '' : Number(e.target.value)
           onChangeMm(displayToMm(raw, units))
@@ -66,11 +68,11 @@ export default function InputsPanel({ form, setForm, onRun, running, error, unit
     <div className="panel">
       <Section num="01" title={L('secInnerBoxTitle')} caption={L('secInnerBoxCaption')}>
         <div className="field-row">
-          <LengthField label={L('length')} units={units} mmValue={form.box.l} onChangeMm={(v) => set(['box', 'l'], v)} />
-          <LengthField label={L('width')} units={units} mmValue={form.box.w} onChangeMm={(v) => set(['box', 'w'], v)} />
-          <LengthField label={L('height')} units={units} mmValue={form.box.h} onChangeMm={(v) => set(['box', 'h'], v)} />
+          <LengthField label={L('length')} units={units} mmValue={form.box.l} placeholderMm={255} onChangeMm={(v) => set(['box', 'l'], v)} />
+          <LengthField label={L('width')} units={units} mmValue={form.box.w} placeholderMm={140} onChangeMm={(v) => set(['box', 'w'], v)} />
+          <LengthField label={L('height')} units={units} mmValue={form.box.h} placeholderMm={110} onChangeMm={(v) => set(['box', 'h'], v)} />
         </div>
-        <NumField label={L('unitWeight')} suffix="lb" step={0.1} value={form.box.unit_weight} onChange={(v) => set(['box', 'unit_weight'], v)} />
+        <NumField label={L('unitWeight')} suffix="lb" step={0.1} value={form.box.unit_weight} placeholder="5" onChange={(v) => set(['box', 'unit_weight'], v)} />
       </Section>
 
       <Section num="02" title={L('secFillModeTitle')} caption={L('secFillModeCaption')}>
@@ -91,11 +93,11 @@ export default function InputsPanel({ form, setForm, onRun, running, error, unit
           </button>
         </div>
         {form.mode === 'fixed_N' ? (
-          <NumField label={L('unitsPerCartonN')} value={form.N} onChange={(v) => set(['N'], v)} />
+          <NumField label={L('unitsPerCartonN')} value={form.N} placeholder="10" onChange={(v) => set(['N'], v)} />
         ) : (
           <div className="field-row two">
-            <NumField label={L('maxUnitsPerCarton')} value={form.max_units_per_carton} onChange={(v) => set(['max_units_per_carton'], v)} />
-            <NumField label={L('cartonWeightCap')} suffix="lb" value={form.carton_weight_cap} onChange={(v) => set(['carton_weight_cap'], v)} />
+            <NumField label={L('maxUnitsPerCarton')} value={form.max_units_per_carton} placeholder="150" onChange={(v) => set(['max_units_per_carton'], v)} />
+            <NumField label={L('cartonWeightCap')} suffix="lb" value={form.carton_weight_cap} placeholder="50" onChange={(v) => set(['carton_weight_cap'], v)} />
           </div>
         )}
       </Section>

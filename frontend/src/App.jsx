@@ -6,11 +6,11 @@ import { optimize } from './api.js'
 import { t } from './i18n.js'
 
 const DEFAULT_FORM = {
-  box: { l: 255, w: 140, h: 110, unit_weight: 5 },
+  box: { l: '', w: '', h: '', unit_weight: '' },
   mode: 'fixed_N',
-  N: 10,
-  max_units_per_carton: 150,
-  carton_weight_cap: 50,
+  N: '',
+  max_units_per_carton: '',
+  carton_weight_cap: '',
   margin: { L: 15, W: 15, H: 15 },
   carton_rule: 'independent',
   carton_max_independent: { L: 450, W: 340, H: 260 },
@@ -32,10 +32,28 @@ export default function App() {
   }, [lang])
 
   const handleRun = async () => {
+    const positive = (v) => typeof v === 'number' && v > 0
+    const { box } = form
+    const boxOk = [box.l, box.w, box.h, box.unit_weight].every(positive)
+    const fillOk = form.mode === 'fixed_N'
+      ? positive(form.N)
+      : positive(form.max_units_per_carton) && positive(form.carton_weight_cap)
+    if (!boxOk || !fillOk) {
+      setError(t(lang, 'fillRequired'))
+      return
+    }
     setRunning(true)
     setError(null)
     try {
-      const data = await optimize(form)
+      // Fields belonging to the inactive fill mode are blank; the API still
+      // needs valid numbers for them, so send its defaults (they're ignored).
+      const payload = {
+        ...form,
+        N: form.mode === 'fixed_N' ? form.N : 10,
+        max_units_per_carton: form.mode === 'maximize' ? form.max_units_per_carton : 150,
+        carton_weight_cap: form.mode === 'maximize' ? form.carton_weight_cap : 50,
+      }
+      const data = await optimize(payload)
       setResult(data)
     } catch (e) {
       setError(e.message === 'No feasible arrangement found for these inputs.' ? t(lang, 'noFeasible') : e.message)
